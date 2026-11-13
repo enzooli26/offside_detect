@@ -1,0 +1,14 @@
+# Credentials and local environment configuration
+.env
+.env.*
+!.env.example
+!.env.sample
+*.key
+*.pem
+
+# OS and temporary files
+Thumbs.db
+.DS_Store
+*.tmp
+*.swp
+*~
