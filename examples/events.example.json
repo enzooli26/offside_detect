@@ -1,0 +1,39 @@
+{
+  "events": [
+    {
+      "frame": 4,
+      "end_frame": 5,
+      "attacking_team": "A",
+      "defending_team": "D",
+      "attack_direction": 1,
+      "defensive_line_complete": true,
+      "ball_field_point": [34.0, 74.0],
+      "players": [
+        {
+          "player_id": "A9",
+          "team": "A",
+          "receives_pass": true,
+          "effective_part": "head",
+          "effective_field_point": [32.0, 78.0],
+          "uncertainty_m": 0.35
+        },
+        {
+          "player_id": "D4",
+          "team": "D",
+          "role": "defender",
+          "effective_part": "torso",
+          "effective_field_point": [30.0, 82.0],
+          "uncertainty_m": 0.25
+        },
+        {
+          "player_id": "D1",
+          "team": "D",
+          "role": "goalkeeper",
+          "effective_part": "foot",
+          "effective_field_point": [35.0, 70.0],
+          "uncertainty_m": 0.4
+        }
+      ]
+    }
+  ]
+}
