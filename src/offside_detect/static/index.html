@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>边线 · 越位分析工作台</title><link rel="stylesheet" href="/app.css">
+</head>
+<body>
+  <aside class="rail">
+    <a class="brand" href="#"><span class="brand-icon">边</span><span>边线<small>OFFSIDE STUDIO</small></span></a>
+    <div class="rail-label">工作空间</div>
+    <a class="nav active" href="#import"><span>＋</span> 新建分析</a>
+    <a class="nav" href="#results"><span>▤</span> 分析结果</a>
+    <button class="nav" id="help"><span>?</span> 使用指南</button>
+    <div class="rail-bottom"><span class="local-dot"></span> 本地工作台<p>素材与结果保存在本机</p><small>V005 · 原型版</small></div>
+  </aside>
+  <main>
+    <header class="topbar"><span>工作空间 <span class="slash">/</span> 新建分析</span><button class="text-button" id="stop">关闭工作台</button></header>
+    <section class="heading" id="import"><div><div class="eyebrow">FROM TOUCH TO DECISION</div><h1>让每一次传球，清晰可见<span>。</span></h1><p>导入比赛素材，在鸟瞰球场中查看球员位置与越位线。</p></div><button class="button outline" id="demo">体验演示 <span>↗</span></button></section>
+    <div class="notice"><span class="notice-icon">i</span><p><strong>当前为辅助分析原型</strong>　真实视频需配套标定与传球 / 跟踪文件；自动识别尚未接入。演示使用合成数据。</p></div>
+    <section class="workspace-grid">
+      <div class="panel inputs">
+        <div class="panel-title"><span class="step">01</span><h2>导入素材</h2><span class="required">三项必填</span></div>
+        <label class="video-drop" id="video-drop"><input type="file" id="video" accept="video/*,.mkv,.avi,.mov,.mp4"><span class="upload-icon">↥</span><strong id="video-name">选择比赛视频</strong><span id="video-detail">点击选择，或拖入文件</span><small>固定机位 · 侧面俯瞰视角 · 最大 4 GB</small></label>
+        <label class="file-row"><span class="file-icon">⌖</span><span class="file-copy"><strong>球场标定</strong><small id="calibration-name">选择 calibration.json</small></span><span class="choose">选择文件</span><input type="file" id="calibration" accept=".json,application/json"></label>
+        <label class="file-row"><span class="file-icon">≋</span><span class="file-copy"><strong>传球与跟踪</strong><small id="events-name">选择 events.json</small></span><span class="choose">选择文件</span><input type="file" id="events" accept=".json,application/json"></label>
+        <div class="settings"><div><strong>干扰提示阈值</strong><output id="threshold-value">0.70</output></div><input id="threshold" type="range" min="0" max="1" step="0.05" value="0.7" aria-label="干扰提示阈值"><p>仅用于事件文件中已有的干扰概率；达到阈值仍需复核。</p></div>
+        <button class="button primary" id="generate" disabled>生成鸟瞰结果 <span>→</span></button>
+        <div class="progress-wrap" hidden id="progress-wrap"><div class="progress-top"><span id="progress-label">准备中</span><span id="progress-number">0%</span></div><progress id="progress" max="100" value="0"></progress></div>
+        <p id="feedback" class="feedback" role="status" aria-live="polite">选择三个文件，或先体验演示。</p>
+      </div>
+      <section class="panel preview-panel" id="results">
+        <div class="panel-title"><span class="step">02</span><h2>鸟瞰视图</h2><span class="pill" id="view-state">等待导入</span></div>
+        <div class="preview-toolbar"><span><i class="green-square"></i> 球场平面</span><span class="mono" id="frame-label">EVENT FRAME / —</span></div>
+        <div class="field-view" id="field-view">
+          <svg id="placeholder" class="pitch" viewBox="0 0 680 450" role="img" aria-label="球场平面示意，尚未生成分析结果">
+            <defs><pattern id="grass" width="80" height="400" patternUnits="userSpaceOnUse"><rect width="40" height="400" fill="#2c7756"/><rect x="40" width="40" height="400" fill="#297152"/></pattern></defs>
+            <rect x="20" y="20" width="640" height="410" rx="8" fill="url(#grass)"/>
+            <g fill="none" stroke="#c7e5d2" stroke-opacity=".65" stroke-width="1.4"><path d="M45 45H635V405H45ZM340 45V405"/><circle cx="340" cy="225" r="53"/><path d="M45 125H137V325H45M635 125H543V325H635M45 176H82V274H45M635 176H598V274H635"/><circle cx="340" cy="225" r="2" fill="#c7e5d2"/></g>
+            <path d="M488 45V405" stroke="#bcf281" stroke-width="2" stroke-dasharray="6 6"/><rect x="496" y="61" width="105" height="26" rx="4" fill="#163d2b"/><text x="549" y="78" text-anchor="middle" fill="#d7f5c2" font-size="11" font-family="sans-serif">OFFSIDE LINE</text>
+            <g fill="#81c2ed" stroke="#dceef8" stroke-width="2"><circle cx="488" cy="148" r="6"/><circle cx="488" cy="300" r="6"/><circle cx="591" cy="229" r="6"/><circle cx="427" cy="220" r="6"/></g><g fill="#ffc281" stroke="#fff0d8" stroke-width="2"><circle cx="447" cy="170" r="6"/><circle cx="390" cy="295" r="6"/><circle cx="280" cy="218" r="6"/></g><circle cx="301" cy="234" r="4" fill="white"/>
+          </svg>
+          <img id="result-image" alt="所选传球事件的鸟瞰分析帧" hidden>
+          <span class="image-caption" id="image-caption">视图示意 · 生成后显示实际事件帧</span>
+        </div>
+        <div class="legend"><span><i style="--dot:#e62828"></i>头部</span><span><i style="--dot:#e6be1e"></i>躯干 / 肩部</span><span><i style="--dot:#1e96e6"></i>脚部</span><span class="legend-note">外圈：橙色进攻 · 蓝色防守</span></div>
+        <div class="result-bottom"><div><strong id="result-title">等待第一份分析</strong><p id="result-description">生成后可逐条查看传球事件，并导出鸟瞰视频。</p></div><div class="downloads"><a id="download-video" class="button outline disabled" aria-disabled="true">下载视频 ↓</a><a id="download-report" class="text-button disabled" aria-disabled="true">事件报告</a></div></div>
+      </section>
+    </section>
+    <section class="panel event-panel">
+      <div class="panel-title"><span class="step">03</span><h2>传球事件</h2><span class="count" id="event-count">0 个事件</span><span class="spacer"></span><small>点击事件查看对应帧</small></div>
+      <div class="table-wrap"><table><thead><tr><th>事件</th><th>视频时间</th><th>触球帧</th><th>分析状态</th><th>相关球员</th><th></th></tr></thead><tbody id="event-list"><tr><td colspan="6" class="empty">尚无传球事件。完成一次分析后，结果会显示在这里。</td></tr></tbody></table></div>
+      <details id="source-details" hidden><summary>查看所选事件的原始画面</summary><img id="source-image" alt="所选传球帧的原视频画面"></details>
+    </section>
+    <footer><span>边线 / OFFSIDE STUDIO</span><span>保留画面证据，让判断有据可循。</span></footer>
+  </main>
+  <dialog id="guide"><button class="dialog-close" id="close-help" aria-label="关闭指南">×</button><div class="eyebrow">QUICK START</div><h2>从这里开始</h2><ol><li><strong>先体验演示</strong><p>无需准备文件。查看合成数据生成的三种事件结果。</p></li><li><strong>导入自己的素材</strong><p>选择视频，以及与该视频匹配的球场标定和传球 / 跟踪 JSON。示例格式在项目 examples 文件夹中；示例标定不能直接用于其他机位。</p></li><li><strong>生成并复核</strong><p>点击生成后查看进度，选择事件查看鸟瞰图和原始画面，下载 MP4 和 JSON 报告。帧号从 0 开始。</p></li></ol><p class="guide-note">当前界面不自动生成标定、传球与跟踪数据。没有逐帧跟踪的片段只显示球场；缺少证据的事件会保留为待复核状态。视频在本机处理，工作文件位于 .local/web-jobs。</p><button class="button primary" id="guide-done">开始使用 →</button></dialog>
+  <script src="/app.js" defer></script>
+</body>
+</html>

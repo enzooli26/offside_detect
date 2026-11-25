@@ -87,6 +87,10 @@ def draw_decision(canvas: np.ndarray, calibration: FieldCalibration, decision: O
         cv2.circle(canvas, center, 5, (245, 245, 245), -1, cv2.LINE_AA)
         cv2.circle(canvas, center, 7, (20, 20, 20), 1, cv2.LINE_AA)
 
+    # Hershey fonts do not support Chinese; translated messages live in the UI.
+    cv2.rectangle(canvas, (10, 10), (min(canvas.shape[1] - 10, 920), 42), (20, 20, 20), -1)
+    cv2.putText(canvas, decision.status, (18, 32), cv2.FONT_HERSHEY_SIMPLEX, 0.52, _status_color(decision.status), 1, cv2.LINE_AA)
+
 
 def draw_track_observation(
     canvas: np.ndarray,
@@ -117,11 +121,6 @@ def draw_track_observation(
         center = (int(round(projected[0])), int(round(projected[1])))
         cv2.circle(canvas, center, 5, (245, 245, 245), -1, cv2.LINE_AA)
         cv2.circle(canvas, center, 7, (20, 20, 20), 1, cv2.LINE_AA)
-
-    banner = f"{decision.status}: {decision.message}"
-    cv2.rectangle(canvas, (10, 10), (min(canvas.shape[1] - 10, 920), 42), (20, 20, 20), -1)
-    cv2.putText(canvas, banner[:120], (18, 32), cv2.FONT_HERSHEY_SIMPLEX, 0.52, _status_color(decision.status), 1, cv2.LINE_AA)
-
 
 def render_frame(frame: np.ndarray, calibration: FieldCalibration, decision: OffsideDecision | None = None) -> np.ndarray:
     # The primary output is a tactical bird's-eye canvas. Warping the source

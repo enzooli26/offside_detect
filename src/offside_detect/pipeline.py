@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 import json
+from collections.abc import Callable
 
 import cv2
 
@@ -45,11 +46,13 @@ def run_video(
     output_path: str | Path,
     interference_threshold: float = 0.7,
     tracks: dict[int, dict[str, object]] | None = None,
+    progress: Callable[[int, int], None] | None = None,
 ) -> dict[str, object]:
     capture = cv2.VideoCapture(str(video_path))
     if not capture.isOpened():
         raise ValueError(f"could not open video: {video_path}")
     fps = float(capture.get(cv2.CAP_PROP_FPS) or 25.0)
+    total_frames = int(capture.get(cv2.CAP_PROP_FRAME_COUNT) or 0)
     width, height = calibration.output_size
     writer = cv2.VideoWriter(str(output_path), cv2.VideoWriter_fourcc(*"mp4v"), fps, (width, height))
     if not writer.isOpened():
@@ -90,9 +93,15 @@ def run_video(
                 draw_decision(output, calibration, active)
             writer.write(output)
             frame_index += 1
+            if progress is not None and (frame_index == 1 or frame_index % 10 == 0):
+                progress(frame_index, total_frames)
     finally:
         capture.release()
         writer.release()
+    if not frame_index:
+        raise ValueError("视频没有可解码的帧，请选择有效的视频文件。")
+    if progress is not None:
+        progress(frame_index, frame_index)
     return {
         "input": str(video_path),
         "output": str(output_path),
